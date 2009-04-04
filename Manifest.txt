@@ -1,0 +1,13 @@
+History.txt
+Manifest.txt
+README.txt
+COPYING.txt
+Rakefile
+bin/launchy_opensearch
+lib/launchy_opensearch.rb
+spec/launchy_opensearch_spec.rb
+spec/fixtures/launchy.ini
+spec/fixtures/discogs.xml
+spec/fixtures/secure-wikipedia-english.xml
+spec/fixtures/youtube.xml
+

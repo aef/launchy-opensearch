@@ -1,0 +1,122 @@
+#!/usr/bin/env ruby
+#
+# Copyright 2009 Alexander E. Fischer <aef@raxys.net>
+#
+# This file is part of LaunchyOpenSearch.
+#
+# LaunchyOpenSearch is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# TODO: If user-choices patch gets accepted, use :one_way => true for --version
+
+# If library is not locally accessible, use gem to include it.
+begin
+  require 'lib/launchy_opensearch'
+rescue LoadError
+  require 'rubygems'
+  require 'launchy_opensearch'
+end
+
+# User friendly message if user-choices is not available
+begin
+  require 'user-choices'
+rescue LoadError
+  warn "This command needs the user-choices gem to be installed.\n\nSolution: gem install user-choices"; exit false
+end
+
+class LaunchyOpenSearch::Application < UserChoices::Command
+  include UserChoices
+
+  MODES = %w{append replace}
+
+  # Prepare configuration sources
+  def add_sources(builder)
+    builder.add_source(
+      CommandLineSource, :usage,
+      "Usage: #$PROGRAM_NAME [options] opensearch-files\n\n",
+      "Import OpenSearch XML files into the Weby plugin of the keystroke application launcher Launchy\n"
+    )
+  end
+  
+  # Define configuration options
+  def add_choices(builder)
+    builder.add_choice(:config_path, :default => LaunchyOpenSearch.launchy_config_path) do |cli|
+      cli.uses_option('-c', '--config FILE',
+        'Launchy ini file to modify. Uses the current user\'s config file by default.')
+    end
+
+    builder.add_choice(:mode, :default => MODES.first, :type => MODES ) do |cli|
+      cli.uses_option('-m', '--mode MODE',
+        "Insert mode. Possible settings: #{MODES.join(', ')}. Default is #{MODES.first}.")
+    end
+
+    builder.add_choice(:version, :default => false, :type => :boolean) do |cli|
+      cli.uses_switch('-v', '--version', 'Display version and licensing information')
+    end
+
+    builder.add_choice(:filenames) {|cli| cli.uses_arglist }
+  end
+
+  # Main program
+  def execute
+    if @user_choices[:version]
+      klass = LaunchyOpenSearch
+      puts "\n#{klass.name} #{klass::VERSION}"
+      puts DATA.read; exit
+    end
+
+    if @user_choices[:filenames].empty?
+      warn 'No OpenSearch files specified'; exit false
+    end
+
+    @user_choices[:filenames].each do |filename|
+      warn "Ignoring #{filename}. Not readable or missing." unless File.readable?(filename)
+    end
+
+    new_engines = LaunchyOpenSearch.parse_opensearch_files(@user_choices[:filenames])
+    count = new_engines.size
+    config = LaunchyOpenSearch.read_config_hash(@user_choices[:config_path])
+
+    if @user_choices[:mode] == 'append'
+      current_engines = LaunchyOpenSearch.extract_config_hash(config)
+      new_engines = current_engines + new_engines
+    end
+
+    LaunchyOpenSearch.patch_config_hash(config, new_engines)
+    LaunchyOpenSearch.write_config_hash(config, @user_choices[:config_path])
+
+    puts "#{count} search engines installed."
+  end
+end
+
+S4tUtils.with_pleasant_exceptions {LaunchyOpenSearch::Application.new.execute}
+
+__END__
+
+Project: https://rubyforge.org/projects/aef/
+RDoc: http://aef.rubyforge.org/launchy_opensearch/
+
+Copyright 2009 Alexander E. Fischer <aef@raxys.net>
+
+LaunchyOpenSearch is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
