@@ -34,7 +34,7 @@ rescue LoadError
   warn "This command needs the user-choices gem to be installed.\n\nSolution: gem install user-choices"; exit false
 end
 
-class LaunchyOpenSearch::Application < UserChoices::Command
+class Aef::LaunchyOpenSearch::Application < UserChoices::Command
   include UserChoices
 
   MODES = %w{append replace}
@@ -50,7 +50,7 @@ class LaunchyOpenSearch::Application < UserChoices::Command
   
   # Define configuration options
   def add_choices(builder)
-    builder.add_choice(:config_path, :default => LaunchyOpenSearch.launchy_config_path) do |cli|
+    builder.add_choice(:config_path, :default => Aef::LaunchyOpenSearch.launchy_config_path) do |cli|
       cli.uses_option('-c', '--config FILE',
         'Launchy ini file to modify. Uses the current user\'s config file by default.')
     end
@@ -74,7 +74,7 @@ class LaunchyOpenSearch::Application < UserChoices::Command
 
   # Version and licensing information output
   def version
-    klass = LaunchyOpenSearch
+    klass = Aef::LaunchyOpenSearch
     puts "#{klass.name} #{klass::VERSION}"
     puts
     puts 'Project: https://rubyforge.org/projects/aef/'
@@ -88,12 +88,6 @@ class LaunchyOpenSearch::Application < UserChoices::Command
 
   # Main program
   def execute
-    if @user_choices[:version]
-      klass = LaunchyOpenSearch
-      puts "\n#{klass.name} #{klass::VERSION}"
-      puts DATA.read; exit
-    end
-
     if @user_choices[:filenames].empty?
       warn 'No OpenSearch files specified'; exit false
     end
@@ -102,20 +96,20 @@ class LaunchyOpenSearch::Application < UserChoices::Command
       warn "Ignoring #{filename}. Not readable or missing." unless File.readable?(filename)
     end
 
-    new_engines = LaunchyOpenSearch.parse_opensearch_files(@user_choices[:filenames])
+    new_engines = Aef::LaunchyOpenSearch.parse_opensearch_files(@user_choices[:filenames])
     count = new_engines.size
-    config = LaunchyOpenSearch.read_config_hash(@user_choices[:config_path])
+    config = Aef::LaunchyOpenSearch.read_config_hash(@user_choices[:config_path])
 
     if @user_choices[:mode] == 'append'
-      current_engines = LaunchyOpenSearch.extract_config_hash(config)
+      current_engines = Aef::LaunchyOpenSearch.extract_config_hash(config)
       new_engines = current_engines + new_engines
     end
 
-    LaunchyOpenSearch.patch_config_hash(config, new_engines)
-    LaunchyOpenSearch.write_config_hash(config, @user_choices[:config_path])
+    Aef::LaunchyOpenSearch.patch_config_hash(config, new_engines)
+    Aef::LaunchyOpenSearch.write_config_hash(config, @user_choices[:config_path])
 
     puts "#{count} search engines installed."
   end
 end
 
-S4tUtils.with_pleasant_exceptions {LaunchyOpenSearch::Application.new.execute}
+S4tUtils.with_pleasant_exceptions {Aef::LaunchyOpenSearch::Application.new.execute}

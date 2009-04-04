@@ -35,19 +35,19 @@ in the gem's and commandline tool's name
 
 Determine launchy ini path
 
-  config_path = LaunchyOpenSearch.launchy_config_path
+  config_path = Aef::LaunchyOpenSearch.launchy_config_path
 
 Parse an OpenSearch engine into a variable
 
-  new_engine = LaunchyOpenSearch.parse_opensearch_file('youtube.xml')
+  new_engine = Aef::LaunchyOpenSearch.parse_opensearch_file('youtube.xml')
 
 Read the launchy ini file into a variable
 
-  config = LaunchyOpenSearch.read_config_hash(config_path)
+  config = Aef::LaunchyOpenSearch.read_config_hash(config_path)
 
 Extract hash with current search engines
 
-  current_engines = LaunchyOpenSearch.extract_config_hash(config)
+  current_engines = Aef::LaunchyOpenSearch.extract_config_hash(config)
 
 Add new engine to the engines hash
 
@@ -55,11 +55,11 @@ Add new engine to the engines hash
 
 Patch the engines hash into the config hash
 
-  LaunchyOpenSearch.patch_config_hash(config, new_engines)
+  Aef::LaunchyOpenSearch.patch_config_hash(config, new_engines)
 
 Write the config hash as ini back to the disk
 
-  LaunchyOpenSearch.write_config_hash(config, config_path)
+  Aef::LaunchyOpenSearch.write_config_hash(config, config_path)
 
 == REQUIREMENTS:
 

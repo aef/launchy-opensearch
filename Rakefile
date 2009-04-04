@@ -4,7 +4,7 @@ require 'rubygems'
 require 'hoe'
 require './lib/launchy_opensearch.rb'
 
-Hoe.new('launchy-opensearch', LaunchyOpenSearch::VERSION) do |p|
+Hoe.new('launchy-opensearch', Aef::LaunchyOpenSearch::VERSION) do |p|
   p.rubyforge_name = 'aef'
   p.developer('Alexander E. Fischer', 'aef@raxys.net')
   p.extra_deps = %w{facets hpricot sys-uname}

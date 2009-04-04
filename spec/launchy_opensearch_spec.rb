@@ -70,7 +70,7 @@ module LaunchyOpenSearchSpecHelper
   end
 end
 
-describe LaunchyOpenSearch do
+describe Aef::LaunchyOpenSearch do
   include LaunchyOpenSearchSpecHelper
 
   before(:each) do
@@ -89,12 +89,12 @@ describe LaunchyOpenSearch do
         path = File.join(ENV['HOME'], '.launchy', 'launchy.ini')
       end
 
-      LaunchyOpenSearch.launchy_config_path.should eql(path)
+      Aef::LaunchyOpenSearch.launchy_config_path.should eql(path)
     end
     
     it "should be able to parse useful information out of OpenSearch XML documents" do
       content = File.read(fixture_path('youtube.xml'))
-      result = LaunchyOpenSearch.parse_opensearch(content)
+      result = Aef::LaunchyOpenSearch.parse_opensearch(content)
 
       result.should be_an_instance_of(Hash)
 
@@ -105,7 +105,7 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to parse useful information out of OpenSearch XML document files" do
-      result = LaunchyOpenSearch.parse_opensearch_file(fixture_path('discogs.xml'))
+      result = Aef::LaunchyOpenSearch.parse_opensearch_file(fixture_path('discogs.xml'))
 
       result.should be_an_instance_of(Hash)
 
@@ -122,7 +122,7 @@ describe LaunchyOpenSearch do
         fixture_path('secure-wikipedia-english.xml')
       ]
       
-      result = LaunchyOpenSearch.parse_opensearch_files(files)
+      result = Aef::LaunchyOpenSearch.parse_opensearch_files(files)
 
       result.should be_an_instance_of(Array)
       result.should include(info_youtube)
@@ -131,7 +131,7 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to read a Launchy configuration ini file" do
-      result = LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
+      result = Aef::LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
 
       result.should be_an_instance_of(Hash)
 
@@ -152,9 +152,9 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to extract an array of engine hashes from a config file hash" do
-      config_hash = LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
+      config_hash = Aef::LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
 
-      result = LaunchyOpenSearch.extract_config_hash(config_hash)
+      result = Aef::LaunchyOpenSearch.extract_config_hash(config_hash)
 
       result.should be_an_instance_of(Array)
       result.should have(14).items
@@ -169,13 +169,13 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to patch an array of engines with additional engines" do
-      config_hash = LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
+      config_hash = Aef::LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
 
-      engines = LaunchyOpenSearch.extract_config_hash(config_hash)
+      engines = Aef::LaunchyOpenSearch.extract_config_hash(config_hash)
       engines << info_discogs
 
       lambda {
-        LaunchyOpenSearch.patch_config_hash(config_hash, engines)
+        Aef::LaunchyOpenSearch.patch_config_hash(config_hash, engines)
       }.should change{ config_hash['weby'].size }.from(45).to(49)
 
       name_key = config_hash['weby'].find {|key, value| value == 'Discogs'}.first
@@ -189,17 +189,17 @@ describe LaunchyOpenSearch do
     it "should be able to write a config hash to ini file" do
       config_file_path = File.join(@folder_path, 'launchy.ini')
 
-      config_hash = LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
+      config_hash = Aef::LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
 
-      engines = LaunchyOpenSearch.extract_config_hash(config_hash)
+      engines = Aef::LaunchyOpenSearch.extract_config_hash(config_hash)
       engines << info_discogs
 
-      LaunchyOpenSearch.patch_config_hash(config_hash, engines)
+      Aef::LaunchyOpenSearch.patch_config_hash(config_hash, engines)
 
-      LaunchyOpenSearch.write_config_hash(config_hash, config_file_path)
+      Aef::LaunchyOpenSearch.write_config_hash(config_hash, config_file_path)
       File.exist?(config_file_path).should be_true
 
-      LaunchyOpenSearch.read_config_hash(config_file_path)['weby'].sort.should eql(config_hash['weby'].sort)
+      Aef::LaunchyOpenSearch.read_config_hash(config_file_path)['weby'].sort.should eql(config_hash['weby'].sort)
     end
   end
 
@@ -212,7 +212,7 @@ describe LaunchyOpenSearch do
       lambda {
         `#{executable_path} -c #{config_file_path} #{fixture_path('discogs.xml')}`
       }.should change{
-        LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
+        Aef::LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
       }.from('14').to('15')
     end
 
@@ -224,7 +224,7 @@ describe LaunchyOpenSearch do
       lambda {
         `#{executable_path} --mode replace -c #{config_file_path} #{fixture_path('discogs.xml')}`
       }.should change{
-        LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
+        Aef::LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
       }.from('14').to('1')
     end
 
@@ -236,7 +236,7 @@ describe LaunchyOpenSearch do
       lambda {
         `#{executable_path} -m replace --config #{config_file_path} #{fixture_path('discogs.xml')} #{fixture_path('youtube.xml')} #{fixture_path('secure-wikipedia-english.xml')}`
       }.should change{
-        LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
+        Aef::LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
       }.from('14').to('3')
     end
   end

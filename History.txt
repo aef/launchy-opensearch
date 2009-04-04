@@ -1,4 +1,8 @@
-=== 1.1.1 / 2009-03-20
+=== 1.2.0 / unreleased
+
+* 1 major enhancement
+
+  * Namespaced into module Aef
 
 * 3 minor enhancement
 
