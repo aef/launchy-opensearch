@@ -1,13 +1,14 @@
 = LaunchyOpenSearch
 
 * Project: https://rubyforge.org/projects/aef/
-* RDoc: http://aef.rubyforge.org/launchy_opensearch/
+* RDoc: http://aef.rubyforge.org/launchy-opensearch/
+* Github: http://github.com/aef/launchy-opensearch/
 
 == DESCRIPTION:
 
-This program allows to parse OpenSearch XML files and include them as search
-engines in the Weby plugin of the keystroke app launcher Launchy by editing
-Launchy's ini config file.
+LaunchyOpenSearch is a Ruby library and commandline tool that allows to parse
+OpenSearch XML files and include them as search engines in the Weby plugin of
+the keystroke app launcher Launchy by editing Launchy's ini config file.
 
 == FEATURES/PROBLEMS:
 
@@ -19,63 +20,65 @@ Launchy's ini config file.
 
 == SYNOPSIS:
 
-* In commandline:
+=== Commandline
 
 Launchy should be closed while using OpenSearchLaunchy
 
-  launchy_opensearch youtube.xml
+  launchy-opensearch youtube.xml
 
-* As library:
+=== Library
 
-  require 'breakverter'
+Notice that the library is written with an underscore instead of the dash used
+in the gem's and commandline tool's name
 
-  # Determine launchy ini path
+  require 'launchy_opensearch'
+
+Determine launchy ini path
 
   config_path = LaunchyOpenSearch.launchy_config_path
 
-  # Read XML file
+Parse an OpenSearch engine into a variable
 
   new_engine = LaunchyOpenSearch.parse_opensearch_file('youtube.xml')
 
-  # Read launchy ini file
+Read the launchy ini file into a variable
 
   config = LaunchyOpenSearch.read_config_hash(config_path)
 
-  # Extract hash with current search engines
+Extract hash with current search engines
 
   current_engines = LaunchyOpenSearch.extract_config_hash(config)
 
-  # Add new engine
+Add new engine to the engines hash
 
   new_engines = current_engines + new_engine
 
-  # Patch config hash
+Patch the engines hash into the config hash
 
   LaunchyOpenSearch.patch_config_hash(config, new_engines)
 
-  # Write to disk
+Write the config hash as ini back to the disk
 
   LaunchyOpenSearch.write_config_hash(config, config_path)
 
 == REQUIREMENTS:
 
-* For general use:
-  * rubygems
-  * hpricot
-  * facets
-  * sys-uname
+* rubygems
+* hpricot
+* facets
+* sys-uname
 
-* For commandline use:
-  * user-choices
+=== Additional for commandline
+* user-choices
 
-* For automated testing:
-  * rspec
+=== Additional for automated testing
+* rspec
 
 == INSTALL:
 
 === Normal
 
-  gem install launchy_opensearch
+  gem install launchy-opensearch
 
 Additionally for the commandline tool:
 
@@ -97,7 +100,7 @@ Add the key to your rubygems' trusted certificates by the following command:
 Now you can install the gem while automatically verifying it's signature by the
 following command:
 
-  gem install launchy_opensearch -P HighSecurity
+  gem install launchy-opensearch -P HighSecurity
 
 Please notice that you will need other keys for dependent libraries, so you may
 have to install dependencies manually.
@@ -107,7 +110,7 @@ have to install dependencies manually.
 You can test this package through rspec on your system. First find the path
 where the gem was installed to:
 
-  gem which launchy_opensearch
+  gem which launchy-opensearch
 
 Go into the root directory of the installed gem and run the following command
 to start the test runner:
@@ -115,6 +118,24 @@ to start the test runner:
   rake spec
 
 If something goes wrong you should be noticed through failing examples.
+
+== DEVELOPMENT:
+
+This software is developed in the source code management system git hosted
+at github.com. You can download the most recent sourcecode through the following
+command:
+
+  git clone git://github.com/aef/launchy-opensearch.git
+
+Help on making this software better is always very appreciated. If you want your
+changes to be included in the official release, please send me a patch through
+the project's tracker[https://rubyforge.org/tracker/?group_id=7890] at
+rubyforge.org. You can generate a patch-file by the following command:
+
+  git diff > patch.diff
+
+Please make sure to write tests for your changes and notice that I can't promise
+to include your changes before reviewing them.
 
 == LICENSE:
 
