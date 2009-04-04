@@ -27,7 +27,7 @@ module LaunchyOpenSearchSpecHelper
   # If there is a way to get the executable path of the currently running ruby
   # interpreter, please tell me how.
   warn 'Attention: If the ruby interpreter to be tested with is not ruby in the ' +
-       'default path, you have to change this manually in spec/breakverter_spec.rb'
+       "default path, you have to change this manually in #{__FILE__} line #{__LINE__ + 1}"
   RUBY_PATH = 'ruby'
 
   def executable_path
