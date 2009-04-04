@@ -16,18 +16,28 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 require 'lib/launchy_opensearch'
-require 'tempfile'
+
+require 'fileutils'
+require 'tmpdir'
 
 require 'rubygems'
 require 'sys/uname'
 
-# If there is a way to get the executable path of the currently running ruby
-# interpreter, please tell me how.
-warn 'Attention: If the ruby interpreter to be tested with is not ruby in the' +
-     'default path, you have to change this manually in spec/breakverter_spec.rb'
-RUBY_PATH = 'ruby'
-
 module LaunchyOpenSearchSpecHelper
+  # If there is a way to get the executable path of the currently running ruby
+  # interpreter, please tell me how.
+  warn 'Attention: If the ruby interpreter to be tested with is not ruby in the' +
+       'default path, you have to change this manually in spec/breakverter_spec.rb'
+  RUBY_PATH = 'ruby'
+
+  def executable_path
+    "#{RUBY_PATH} bin/launchy_opensearch"
+  end
+
+  def fixture_path(name)
+    File.join('spec/fixtures', name)
+  end
+
   def windows?
     Sys::Uname.sysname.downcase.include?('windows')
   end
@@ -63,7 +73,15 @@ end
 describe LaunchyOpenSearch do
   include LaunchyOpenSearchSpecHelper
 
-  describe 'library' do
+  before(:each) do
+    @folder_path = Dir.mktmpdir('launchy_opensearch_spec')
+  end
+
+  after(:each) do
+    FileUtils.rm_rf(@folder_path)
+  end
+
+  context 'library' do
     it "should be able to determine Launchy's config file path correctly" do
       if windows?
         path = File.join(ENV['APPDATA'], 'Launchy', 'Launchy.ini')
@@ -75,7 +93,7 @@ describe LaunchyOpenSearch do
     end
     
     it "should be able to parse useful information out of OpenSearch XML documents" do
-      content = File.read('spec/fixtures/youtube.xml')
+      content = File.read(fixture_path('youtube.xml'))
       result = LaunchyOpenSearch.parse_opensearch(content)
 
       result.should be_an_instance_of(Hash)
@@ -87,7 +105,7 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to parse useful information out of OpenSearch XML document files" do
-      result = LaunchyOpenSearch.parse_opensearch_file('spec/fixtures/discogs.xml')
+      result = LaunchyOpenSearch.parse_opensearch_file(fixture_path('discogs.xml'))
 
       result.should be_an_instance_of(Hash)
 
@@ -99,9 +117,9 @@ describe LaunchyOpenSearch do
 
     it "should be able to parse useful information out of multiple OpenSearch XML document files" do
       files = [
-        'spec/fixtures/youtube.xml',
-        'spec/fixtures/discogs.xml',
-        'spec/fixtures/secure-wikipedia-english.xml'
+        fixture_path('youtube.xml'),
+        fixture_path('discogs.xml'),
+        fixture_path('secure-wikipedia-english.xml')
       ]
       
       result = LaunchyOpenSearch.parse_opensearch_files(files)
@@ -113,7 +131,7 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to read a Launchy configuration ini file" do
-      result = LaunchyOpenSearch.read_config_hash('spec/fixtures/launchy.ini')
+      result = LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
 
       result.should be_an_instance_of(Hash)
 
@@ -134,7 +152,7 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to extract an array of engine hashes from a config file hash" do
-      config_hash = LaunchyOpenSearch.read_config_hash('spec/fixtures/launchy.ini')
+      config_hash = LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
 
       result = LaunchyOpenSearch.extract_config_hash(config_hash)
 
@@ -151,7 +169,7 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to patch an array of engines with additional engines" do
-      config_hash = LaunchyOpenSearch.read_config_hash('spec/fixtures/launchy.ini')
+      config_hash = LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
 
       engines = LaunchyOpenSearch.extract_config_hash(config_hash)
       engines << info_discogs
@@ -169,77 +187,57 @@ describe LaunchyOpenSearch do
     end
 
     it "should be able to write a config hash to ini file" do
-      temp_file = Tempfile.new('launchy_opensearch_spec')
-      location = temp_file.path
-      temp_file.close
-      temp_file.unlink
+      config_file_path = File.join(@folder_path, 'launchy.ini')
 
-      config_hash = LaunchyOpenSearch.read_config_hash('spec/fixtures/launchy.ini')
+      config_hash = LaunchyOpenSearch.read_config_hash(fixture_path('launchy.ini'))
 
       engines = LaunchyOpenSearch.extract_config_hash(config_hash)
       engines << info_discogs
 
       LaunchyOpenSearch.patch_config_hash(config_hash, engines)
 
-      LaunchyOpenSearch.write_config_hash(config_hash, location)
-      File.exist?(location).should be_true
+      LaunchyOpenSearch.write_config_hash(config_hash, config_file_path)
+      File.exist?(config_file_path).should be_true
 
-      LaunchyOpenSearch.read_config_hash(location)['weby'].sort.should eql(config_hash['weby'].sort)
-
-      File.unlink(location)
+      LaunchyOpenSearch.read_config_hash(config_file_path)['weby'].sort.should eql(config_hash['weby'].sort)
     end
   end
 
-  describe 'commandline tool' do
+  context 'commandline tool' do
     it "should be able add an engine from an OpenSearch XML file to Launchy's ini-file" do
-      temp_file = Tempfile.new('launchy_opensearch_spec')
-      location = temp_file.path
-      temp_file.close
-      temp_file.unlink
+      config_file_path = File.join(@folder_path, 'launchy.ini')
       
-      FileUtils.copy('spec/fixtures/launchy.ini', location)
+      FileUtils.copy(fixture_path('launchy.ini'), config_file_path)
 
       lambda {
-        `#{RUBY_PATH} bin/launchy_opensearch -c #{location} spec/fixtures/discogs.xml`
+        `#{executable_path} -c #{config_file_path} #{fixture_path('discogs.xml')}`
       }.should change{
-        LaunchyOpenSearch.read_config_hash(location)['weby']['sites\\size']
+        LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
       }.from('14').to('15')
-
-      File.unlink(location)
     end
 
     it "should be able replace current engines with an engine from an OpenSearch XML file" do
-      temp_file = Tempfile.new('launchy_opensearch_spec')
-      location = temp_file.path
-      temp_file.close
-      temp_file.unlink
-
-      FileUtils.copy('spec/fixtures/launchy.ini', location)
+      config_file_path = File.join(@folder_path, 'launchy.ini')
+     
+      FileUtils.copy(fixture_path('launchy.ini'), config_file_path)
 
       lambda {
-        `#{RUBY_PATH} bin/launchy_opensearch --mode replace -c #{location} spec/fixtures/discogs.xml`
+        `#{executable_path} --mode replace -c #{config_file_path} #{fixture_path('discogs.xml')}`
       }.should change{
-        LaunchyOpenSearch.read_config_hash(location)['weby']['sites\\size']
+        LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
       }.from('14').to('1')
-
-      File.unlink(location)
     end
 
     it "should be able to replace current engines with multiple engines from OpenSearch XML files" do
-      temp_file = Tempfile.new('launchy_opensearch_spec')
-      location = temp_file.path
-      temp_file.close
-      temp_file.unlink
-
-      FileUtils.copy('spec/fixtures/launchy.ini', location)
+      config_file_path = File.join(@folder_path, 'launchy.ini')
+      
+      FileUtils.copy(fixture_path('launchy.ini'), config_file_path)
 
       lambda {
-        `#{RUBY_PATH} bin/launchy_opensearch -m replace --config #{location} spec/fixtures/discogs.xml spec/fixtures/youtube.xml spec/fixtures/secure-wikipedia-english.xml`
+        `#{executable_path} -m replace --config #{config_file_path} #{fixture_path('discogs.xml')} #{fixture_path('youtube.xml')} #{fixture_path('secure-wikipedia-english.xml')}`
       }.should change{
-        LaunchyOpenSearch.read_config_hash(location)['weby']['sites\\size']
+        LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
       }.from('14').to('3')
-
-      File.unlink(location)
     end
   end
 end

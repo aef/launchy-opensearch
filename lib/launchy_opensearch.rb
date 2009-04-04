@@ -21,14 +21,13 @@ require 'uri'
 require 'rubygems'
 require 'hpricot'
 require 'facets/ini'
-require 'facets/version'
 require 'sys/uname'
 
 # Offers static methods for all steps in parsing usefull information out of the
 # OpenSearch XML format and modifying the configuration of Launchy's Weby plugin
 module LaunchyOpenSearch
 
-  VERSION = '1.1.0'
+  VERSION = '1.1.1'
 
   # Determines the location of Launchy's configuration Ini file on different
   # platforms
@@ -89,7 +88,7 @@ module LaunchyOpenSearch
     # Ini class doesn't like empty lines and can only read from files.
     original = File.read(path)
 
-    if VersionNumber.new(RUBY_VERSION) >= VersionNumber.new('1.9.0')
+    if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('1.9')
       cleaned = original.lines.map{|line| line.chomp.squeeze(' ')}.reject{|line| line == ''}.join("\n")
     else
       cleaned = original.map{|line| line.chomp.squeeze(' ')}.reject{|line| line == ''}.join("\n")
@@ -158,7 +157,7 @@ module LaunchyOpenSearch
       end
     end
 
-    if VersionNumber.new(RUBY_VERSION) >= VersionNumber.new('1.9.0')
+    if Gem::Version.new(RUBY_VERSION) >= Gem::Version.new('1.9')
       # Facets ini parser doesn't seems to use the .lines enumerator yet
       Ini.write_to_file(path, config_hash)
     else

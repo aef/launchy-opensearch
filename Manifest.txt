@@ -10,4 +10,3 @@ spec/fixtures/launchy.ini
 spec/fixtures/discogs.xml
 spec/fixtures/secure-wikipedia-english.xml
 spec/fixtures/youtube.xml
-

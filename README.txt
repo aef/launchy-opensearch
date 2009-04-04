@@ -59,15 +59,62 @@ Launchy should be closed while using OpenSearchLaunchy
 
 == REQUIREMENTS:
 
-* hpricot (for XML parsing)
-* facets (for ini parsing)
-* sys-uname (for operating system detection)
-* user-choices (for commandline tool)
+* For general use:
+  * rubygems
+  * hpricot
+  * facets
+  * sys-uname
+
+* For commandline use:
+  * user-choices
+
+* For automated testing:
+  * rspec
 
 == INSTALL:
 
-* gem install launchy_opensearch
-* gem install user-choices (only for commandline tool)
+=== Normal
+
+  gem install launchy_opensearch
+
+Additionally for the commandline tool:
+
+  gem install user-choices
+
+=== High security (recommended)
+
+There is a high security installation option available through rubygems. It is
+highly recommended over the normal installation, although it may be a bit less
+comfortable. To use the installation method, you will need my public key, which
+I use for cryptographic signatures on all my gems. You can find the public key
+and more detailed verification information in the aef-certificates section of my
+rubyforge project[https://rubyforge.org/frs/?group_id=7890&release_id=31749]
+
+Add the key to your rubygems' trusted certificates by the following command:
+
+  gem cert --add aef.pem
+
+Now you can install the gem while automatically verifying it's signature by the
+following command:
+
+  gem install launchy_opensearch -P HighSecurity
+
+Please notice that you will need other keys for dependent libraries, so you may
+have to install dependencies manually.
+
+=== Automated testing
+
+You can test this package through rspec on your system. First find the path
+where the gem was installed to:
+
+  gem which launchy_opensearch
+
+Go into the root directory of the installed gem and run the following command
+to start the test runner:
+
+  rake spec
+
+If something goes wrong you should be noticed through failing examples.
 
 == LICENSE:
 
