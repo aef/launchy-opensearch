@@ -11,6 +11,7 @@
   * Minor refactorings
   * Improved documentation
   * Added test for --version command
+  * Renamed gem and executable from launchy_opensearch to launchy-opensearch
 
 * 1 minor bugfix
 
