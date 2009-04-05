@@ -74,11 +74,12 @@ class Aef::LaunchyOpenSearch::Application < UserChoices::Command
 
   # Version and licensing information output
   def version
-    klass = Aef::LaunchyOpenSearch
-    puts "#{klass.name} #{klass::VERSION}"
+    name = 'LaunchyOpenSearch'
+    puts "#{name} #{Aef::LaunchyOpenSearch::VERSION}"
     puts
     puts 'Project: https://rubyforge.org/projects/aef/'
-    puts "RDoc: http://aef.rubyforge.org/launchy_opensearch/"
+    puts "RDoc: http://aef.rubyforge.org/#{name.downcase}/"
+    puts "Github: http://github.com/aef/#{name.downcase}/"
     puts
     puts 'Copyright 2009 Alexander E. Fischer <aef@raxys.net>'
     # Read and print licensing information from the top of this file
