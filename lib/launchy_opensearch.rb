@@ -26,4 +26,5 @@ module Aef
 
 end
 
-require 'lib/launchy_opensearch/launchy_opensearch'
+libdir = File.dirname(__FILE__)
+require File.join(libdir, 'launchy_opensearch/launchy_opensearch')
