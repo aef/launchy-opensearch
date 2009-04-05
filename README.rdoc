@@ -103,7 +103,7 @@ Add the key to your rubygems' trusted certificates by the following command:
 Now you can install the gem while automatically verifying it's signature by the
 following command:
 
-  gem install launchy-opensearch -P HighSecurity
+  gem install launchy-opensearch --ignore-dependencies -P HighSecurity
 
 Please notice that you will need other keys for dependent libraries, so you may
 have to install dependencies manually.
