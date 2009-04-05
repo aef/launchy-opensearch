@@ -3,7 +3,7 @@ Manifest.txt
 README.rdoc
 COPYING.txt
 Rakefile
-bin/launchy_opensearch
+bin/launchy-opensearch
 lib/launchy_opensearch.rb
 lib/launchy_opensearch/launchy_opensearch.rb
 spec/launchy_opensearch_spec.rb
