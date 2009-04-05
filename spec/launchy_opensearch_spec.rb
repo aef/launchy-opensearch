@@ -252,8 +252,8 @@ describe Aef::LaunchyOpenSearch do
 LaunchyOpenSearch 1.2.0
 
 Project: https://rubyforge.org/projects/aef/
-RDoc: http://aef.rubyforge.org/launchyopensearch/
-Github: http://github.com/aef/launchyopensearch/
+RDoc: http://aef.rubyforge.org/launchy-opensearch/
+Github: http://github.com/aef/launchy-opensearch/
 
 Copyright 2009 Alexander E. Fischer <aef@raxys.net>
 

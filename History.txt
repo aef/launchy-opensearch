@@ -1,14 +1,20 @@
-=== 1.2.0 / unreleased
+=== 1.2.0 / 2009-04-05
 
 * 1 major enhancement
 
   * Namespaced into module Aef
 
-* 3 minor enhancement
+* 5 minor enhancements
 
   * Better metadata for gem
   * Test refactoring
   * Minor refactorings
+  * Improved documentation
+  * Added test for --version command
+
+* 1 minor bugfix
+
+  * Fixed some bugs related to Ruby 1.8.6
 
 === 1.1.0 / 2009-03-08
 

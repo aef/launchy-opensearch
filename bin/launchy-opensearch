@@ -78,12 +78,16 @@ class Aef::LaunchyOpenSearch::Application < UserChoices::Command
     puts "#{name} #{Aef::LaunchyOpenSearch::VERSION}"
     puts
     puts 'Project: https://rubyforge.org/projects/aef/'
-    puts "RDoc: http://aef.rubyforge.org/#{name.downcase}/"
-    puts "Github: http://github.com/aef/#{name.downcase}/"
+    puts "RDoc: http://aef.rubyforge.org/launchy-opensearch/"
+    puts "Github: http://github.com/aef/launchy-opensearch/"
     puts
     puts 'Copyright 2009 Alexander E. Fischer <aef@raxys.net>'
     # Read and print licensing information from the top of this file
-    puts File.read(__FILE__).lines.map{|line| line[2..-1]}[5..17]
+    if Gem::Version.new(RUBY_VERSION) <= Gem::Version.new('1.8.6')
+      puts File.read(__FILE__).map{|line| line[2..-1]}[5..17]
+    else
+      puts File.read(__FILE__).lines.map{|line| line[2..-1]}[5..17]
+    end
     exit
   end
 
