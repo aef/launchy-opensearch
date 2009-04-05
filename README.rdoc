@@ -14,8 +14,9 @@ the keystroke app launcher Launchy by editing Launchy's ini config file.
 
 * Usable as library and commandline tool
 * Tested and fully working on:
-  * Windows XP i386 (Ruby 1.8.6)
   * Ubuntu Linux 8.10 i386_64 (Ruby 1.8.7 and 1.9.1p0)
+  * Debian GNU/Linux 4.0 i386 (Ruby 1.8.6)
+  * Windows XP i386 (Ruby 1.8.6)
 * The commandline tool doesn't work with Ruby 1.9.x because the user-choices gem is not yet updated. A patch is available here: https://rubyforge.org/tracker/index.php?func=detail&aid=24307&group_id=4192&atid=16176
 
 == SYNOPSIS:
@@ -116,6 +117,10 @@ Go into the root directory of the installed gem and run the following command
 to start the test runner:
 
   rake spec
+
+On Windows systems you have to run the following instead:
+
+  spec spec/**/*_spec.rb
 
 If something goes wrong you should be noticed through failing examples.
 
