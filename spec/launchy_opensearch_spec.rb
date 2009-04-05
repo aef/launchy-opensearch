@@ -246,5 +246,31 @@ describe Aef::LaunchyOpenSearch do
         Aef::LaunchyOpenSearch.read_config_hash(config_file_path)['weby']['sites\\size']
       }.from('14').to('3')
     end
+
+    it 'should display correct version and licensing information with the --version switch' do
+      message = <<-EOF
+LaunchyOpenSearch 1.2.0
+
+Project: https://rubyforge.org/projects/aef/
+RDoc: http://aef.rubyforge.org/launchyopensearch/
+Github: http://github.com/aef/launchyopensearch/
+
+Copyright 2009 Alexander E. Fischer <aef@raxys.net>
+
+LaunchyOpenSearch is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+EOF
+      `#{executable_path} --version`.should eql(message)
+    end
   end
 end
