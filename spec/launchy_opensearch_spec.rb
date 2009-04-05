@@ -74,7 +74,14 @@ describe Aef::LaunchyOpenSearch do
   include LaunchyOpenSearchSpecHelper
 
   before(:each) do
-    @folder_path = Dir.mktmpdir('launchy_opensearch_spec')
+    # Before ruby 1.8.7, the tmpdir standard library had no method to create
+    # a temporary directory (mktmpdir).
+    if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('1.8.7')
+      @folder_path = File.join(Dir.tmpdir, 'launchy_opensearch_spec')
+      Dir.mkdir(@folder_path)
+    else
+      @folder_path = Dir.mktmpdir('launchy_opensearch_spec')
+    end
   end
 
   after(:each) do
