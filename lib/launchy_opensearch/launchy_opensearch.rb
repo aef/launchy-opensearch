@@ -27,7 +27,7 @@ require 'sys/uname'
 # OpenSearch XML format and modifying the configuration of Launchy's Weby plugin
 module Aef::LaunchyOpenSearch
 
-  VERSION = '1.2.0'
+  VERSION = '1.2.1'
 
   # Determines the location of Launchy's configuration Ini file on different
   # platforms

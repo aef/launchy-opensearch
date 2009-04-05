@@ -249,7 +249,7 @@ describe Aef::LaunchyOpenSearch do
 
     it 'should display correct version and licensing information with the --version switch' do
       message = <<-EOF
-LaunchyOpenSearch 1.2.0
+LaunchyOpenSearch 1.2.1
 
 Project: https://rubyforge.org/projects/aef/
 RDoc: http://aef.rubyforge.org/launchy-opensearch/
