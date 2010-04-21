@@ -1,6 +1,7 @@
 = LaunchyOpenSearch
 
 * Project: https://rubyforge.org/projects/aef/
+* RDoc: http://rdoc.info/projects/aef/launchy-opensearch/
 * RDoc: http://aef.rubyforge.org/launchy-opensearch/
 * Github: http://github.com/aef/launchy-opensearch/
 
